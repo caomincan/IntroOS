@@ -5,6 +5,7 @@
 #include <stdlib.h> 
 #include <netinet/in.h> 
 #include <string.h> 
+#include <ctype.h>
 #define PORT 8080 
 int main(int argc, char const *argv[]) 
 { 
@@ -12,8 +13,8 @@ int main(int argc, char const *argv[])
     struct sockaddr_in address; 
     int opt = 1; 
     int addrlen = sizeof(address); 
-    char buffer[1024] = {0}; 
-    char *hello = "Hello from server"; 
+    char buffer[1024] = {0};
+    char hello[1024]  = {0}; 
        
     // Creating socket file descriptor 
     if ((server_fd = socket(AF_INET, SOCK_STREAM, 0)) == 0) 
@@ -51,9 +52,15 @@ int main(int argc, char const *argv[])
         perror("accept"); 
         exit(EXIT_FAILURE); 
     } 
-    valread = read( new_socket , buffer, 1024); 
-    printf("%s\n",buffer ); 
+    valread = read( new_socket , buffer, 1024);
+    int i = 0; 
+    for( ;i<valread&& i<1024;i++){
+        hello[i] = toupper(buffer[i]);
+    }
+    if(i+1<1024){
+        hello[i+1] = '\0';
+    }
     send(new_socket , hello , strlen(hello) , 0 ); 
-    printf("Hello message sent\n"); 
+    printf("Echo  message sent\n"); 
     return 0; 
 } 
